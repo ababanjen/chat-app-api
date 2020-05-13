@@ -17,7 +17,7 @@ io.on('connection',(socket)=>{
         if(name && password) {
             const {error, user} = addUser({id:socket.id, name, room, password})
             if(error) {return callback(error)}
-            socket.emit('message', {user:'admin', 'text': `Hi ${user.name}, You are now connected to ${room} room`})
+            socket.emit('message', {user:'admin', 'text': `Hi ${user.name}, Welcome to the group ${room}!`, id:user.id})
             socket.broadcast.to(user.room).emit('message',{...user, user:'admin', text:`${user.name} is now connected`, name:user.name})
 
             socket.join(user.room)
