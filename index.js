@@ -19,7 +19,7 @@ io.on('connection',(socket)=>{
             if(error) {return callback(error)}
             socket.emit('message', {user:'admin', 'text': `Hi ${user.name}, You are now connected to ${room} room`})
             socket.broadcast.to(user.room).emit('message',{...user, user:'admin', text:`${user.name} is now connected`, name:user.name})
-            
+
             socket.join(user.room)
             callback()
         } else {
@@ -32,6 +32,13 @@ io.on('connection',(socket)=>{
         io.to(user.room).emit('message',{...user,user:user.name, 'text':message})
         callback()
     })
+    socket.on('leave',(user, callback)=>{
+        io.to('chat').emit('message', {user:'admin', text:`${user.name.charAt(0).toUpperCase()}${user.name.slice(1)} has left the conversation`, name:user.name})
+        callback()
+    })
+    socket.leave('chat', () => {
+        io.to('chat').emit(`user ${socket.id} has left the room`);
+      });
 
     socket.on('disconnect',()=>{
         const user = removeUser(socket.id)
